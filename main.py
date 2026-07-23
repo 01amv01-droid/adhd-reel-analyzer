@@ -11,7 +11,7 @@ from google import genai
 # Load API Key
 # ==========================
 load_dotenv()  # يعمل محليًا إذا كان لديك ملف .env
-
+print("API_KEY =", os.environ.get("GEMINI_API_KEY"))
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
 if API_KEY is None:
