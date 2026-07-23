@@ -7,7 +7,13 @@ from main import upload_video, analyze
 app = FastAPI(
     title="ADHD Reel Analyzer API",
     description="Analyze Instagram Reels using Google Gemini",
-    version="2.0.0"
+    version="2.0.0",
+    servers=[
+        {
+            "url": "https://adhd-reel-analyzer-production-3e1a.up.railway.app"
+        }
+    ]
+)"
 )
 
 
