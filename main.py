@@ -11,8 +11,7 @@ load_dotenv()  # يقرأ .env محليًا فقط إذا كان موجودًا
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 
-# للتشخيص (احذفه لاحقًا)
-print("API_KEY =", repr(API_KEY))
+
 
 if not API_KEY:
     raise RuntimeError(
