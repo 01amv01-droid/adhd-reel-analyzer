@@ -7,14 +7,14 @@ from google import genai
 # ==========================
 # Load API Key
 # ==========================
-# ==========================
-# Load API Key
-# ==========================
-load_dotenv()  # يعمل محليًا إذا كان لديك ملف .env
-print("API_KEY =", os.environ.get("GEMINI_API_KEY"))
-API_KEY = os.environ.get("GEMINI_API_KEY")
+load_dotenv()  # يقرأ .env محليًا فقط إذا كان موجودًا
 
-if API_KEY is None:
+API_KEY = os.getenv("GEMINI_API_KEY")
+
+# للتشخيص (احذفه لاحقًا)
+print("API_KEY =", repr(API_KEY))
+
+if not API_KEY:
     raise RuntimeError(
         "GEMINI_API_KEY environment variable is missing."
     )
