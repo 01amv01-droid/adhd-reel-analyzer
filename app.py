@@ -1,5 +1,7 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import tempfile
+import requests
 import os
 
 from main import upload_video, analyze
@@ -7,7 +9,7 @@ from main import upload_video, analyze
 app = FastAPI(
     title="ADHD Reel Analyzer API",
     description="Analyze Instagram Reels using Google Gemini",
-    version="2.0.0",
+    version="3.0.0",
     servers=[
         {
             "url": "https://adhd-reel-analyzer-production-3e1a.up.railway.app"
@@ -15,30 +17,42 @@ app = FastAPI(
     ]
 )
 
+S3_BASE_URL = "https://adhd-videos.s3.eu-north-1.amazonaws.com/adhd.all"
+
+
+class VideoRequest(BaseModel):
+    video_id: int
+
 
 @app.get("/")
 def root():
     return {
         "status": "online",
         "service": "ADHD Reel Analyzer API",
-        "version": "2.0.0"
+        "version": "3.0.0"
     }
 
 
 @app.post("/analyze")
-async def analyze_reel(file: UploadFile = File(...)):
+async def analyze_reel(request: VideoRequest):
 
-    if not file.content_type.startswith("video/"):
+    filename = f"{request.video_id:03d}.mp4"
+
+    video_url = f"{S3_BASE_URL}/{filename}"
+
+    response = requests.get(video_url, stream=True)
+
+    if response.status_code != 200:
         raise HTTPException(
-            status_code=400,
-            detail="Please upload a video file."
+            status_code=404,
+            detail=f"Video {filename} not found."
         )
 
-    suffix = os.path.splitext(file.filename)[1]
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp:
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp:
+        for chunk in response.iter_content(chunk_size=8192):
+            temp.write(chunk)
 
-        temp.write(await file.read())
         temp_path = temp.name
 
     try:
@@ -53,6 +67,7 @@ async def analyze_reel(file: UploadFile = File(...)):
 
         return {
             "success": True,
+            "video_id": request.video_id,
             "analysis": analysis
         }
 
