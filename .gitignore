@@ -1,0 +1,6 @@
+.env
+__pycache__/
+*.pyc
+analysis.md
+analysis.json
+videos/
