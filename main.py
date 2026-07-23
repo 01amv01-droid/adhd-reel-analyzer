@@ -7,12 +7,17 @@ from google import genai
 # ==========================
 # Load API Key
 # ==========================
-load_dotenv()
+# ==========================
+# Load API Key
+# ==========================
+load_dotenv()  # يعمل محليًا إذا كان لديك ملف .env
 
-API_KEY = os.getenv("GEMINI_API_KEY")
+API_KEY = os.environ.get("GEMINI_API_KEY")
 
-if not API_KEY:
-    raise ValueError("GEMINI_API_KEY not found in .env")
+if API_KEY is None:
+    raise RuntimeError(
+        "GEMINI_API_KEY environment variable is missing."
+    )
 
 client = genai.Client(api_key=API_KEY)
 
