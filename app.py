@@ -13,7 +13,6 @@ app = FastAPI(
             "url": "https://adhd-reel-analyzer-production-3e1a.up.railway.app"
         }
     ]
-)"
 )
 
 
